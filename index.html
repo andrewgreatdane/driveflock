@@ -1,0 +1,874 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Flock — Canadian Robotaxi Infrastructure</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --ink: #00436E;
+    --paper: #ffffff;
+    --accent: #E8402A;
+    --accent-soft: #fdf0ee;
+    --mid: #4a7a99;
+    --rule: #d0e4ef;
+    --white: #ffffff;
+    --cerulean: #0093BF;
+  }
+
+  html { scroll-behavior: smooth; }
+
+  body {
+    font-family: 'DM Sans', sans-serif;
+    background: var(--white);
+    color: var(--ink);
+    font-size: 17px;
+    line-height: 1.6;
+    overflow-x: hidden;
+  }
+
+  /* ── NAV ── */
+  nav {
+    position: fixed; top: 0; left: 0; right: 0; z-index: 100;
+    display: flex; justify-content: space-between; align-items: center;
+    padding: 1.25rem 3rem;
+    background: rgba(0, 67, 110, 0.95);
+    backdrop-filter: blur(12px);
+    border-bottom: 1px solid transparent;
+    transition: border-color 0.3s, background 0.3s;
+  }
+  nav.scrolled { border-color: rgba(255,255,255,0.1); background: rgba(0, 67, 110, 0.98); }
+
+  .nav-logo {
+    font-family: 'DM Serif Display', serif;
+    font-size: 1.5rem;
+    letter-spacing: -0.02em;
+    color: #ffffff;
+    text-decoration: none;
+  }
+  .nav-logo span { color: var(--accent); }
+
+  .nav-links { display: flex; gap: 2rem; align-items: center; }
+  .nav-links a {
+    font-size: 0.875rem; font-weight: 400; letter-spacing: 0.02em;
+    color: rgba(255,255,255,0.6); text-decoration: none; transition: color 0.2s;
+  }
+  .nav-links a:hover { color: #ffffff; }
+
+  .btn-primary {
+    background: var(--ink); color: #ffffff;
+    padding: 0.55rem 1.35rem; border-radius: 2rem;
+    font-size: 0.875rem; font-weight: 500;
+    text-decoration: none; transition: background 0.2s, transform 0.15s;
+    display: inline-block;
+  }
+  .btn-primary:hover { background: var(--accent); transform: translateY(-1px); }
+
+  /* ── HERO ── */
+  .hero {
+    min-height: 100vh;
+    display: flex; flex-direction: column; justify-content: flex-end;
+    padding: 0 3rem 5rem;
+    position: relative;
+    overflow: hidden;
+    background: var(--ink);
+  }
+
+  .hero-tag {
+    font-family: 'DM Mono', monospace;
+    font-size: 0.75rem; letter-spacing: 0.12em; text-transform: uppercase;
+    color: var(--cerulean); margin-bottom: 1.5rem;
+    opacity: 1;
+    position: relative; z-index: 1;
+    animation: fadeUp 0.7s ease 0.2s both;
+  }
+
+  .hero-eyebrow {
+    font-family: 'DM Serif Display', serif;
+    font-size: clamp(2rem, 4vw, 3.2rem);
+    line-height: 1.15; letter-spacing: -0.02em;
+    color: #ffffff;
+    max-width: 22ch;
+    opacity: 1;
+    animation: fadeUp 0.8s ease 0.3s both;
+    position: relative; z-index: 1;
+    margin-bottom: 1.25rem;
+  }
+
+  .hero h1 {
+    font-family: 'DM Serif Display', serif;
+    font-size: clamp(2.8rem, 6vw, 6.5rem);
+    line-height: 1.05; letter-spacing: -0.03em;
+    max-width: 100%;
+    color: #ffffff;
+    opacity: 1;
+    animation: fadeUp 0.8s ease 0.5s both;
+    position: relative; z-index: 1;
+  }
+  .hero h1 em {
+    font-style: italic; color: var(--accent);
+    white-space: nowrap;
+  }
+
+  .hero-sub {
+    margin-top: 2rem;
+    font-size: 1.1rem; font-weight: 300; color: rgba(255,255,255,0.55);
+    max-width: 48ch; line-height: 1.6;
+    opacity: 1;
+    animation: fadeUp 0.8s ease 0.7s both;
+    position: relative; z-index: 1;
+  }
+
+  .hero-cta {
+    margin-top: 2.5rem; display: flex; gap: 1rem; align-items: center;
+    opacity: 1;
+    animation: fadeUp 0.8s ease 0.9s both;
+    position: relative; z-index: 1;
+  }
+
+  .hero-grid {
+    position: absolute; inset: 0; z-index: 0;
+    background-image:
+      linear-gradient(rgba(0,147,191,0.15) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(0,147,191,0.15) 1px, transparent 1px);
+    background-size: 80px 80px;
+    mask-image: linear-gradient(to bottom, transparent 0%, rgba(0,0,0,0.5) 30%, rgba(0,0,0,0.5) 70%, transparent 100%);
+  }
+
+  .btn-ghost {
+    font-size: 0.875rem; font-weight: 400; color: rgba(255,255,255,0.55);
+    text-decoration: none; display: flex; align-items: center; gap: 0.4rem;
+    transition: color 0.2s;
+  }
+  .btn-ghost:hover { color: #ffffff; }
+  .btn-ghost svg { transition: transform 0.2s; }
+  .btn-ghost:hover svg { transform: translateX(3px); }
+
+  /* Bouncing scroll arrow */
+  .hero-scroll-arrow {
+    position: absolute;
+    bottom: 2.5rem; left: 50%; transform: translateX(-50%);
+    z-index: 2;
+    display: flex; flex-direction: column; align-items: center; gap: 0.5rem;
+    cursor: pointer;
+    opacity: 1;
+    animation: fadeIn 1s ease 1.4s both;
+  }
+  .hero-scroll-arrow span {
+    font-family: 'DM Mono', monospace; font-size: 0.65rem;
+    letter-spacing: 0.12em; text-transform: uppercase;
+    color: rgba(255,255,255,0.35);
+  }
+  .hero-scroll-arrow svg {
+    animation: bounce 2s ease-in-out infinite;
+    color: rgba(255,255,255,0.5);
+  }
+  .hero-scroll-arrow:hover svg { color: var(--accent); }
+
+  .hero-scroll {
+    position: absolute; right: 3rem; bottom: 3rem;
+    display: flex; flex-direction: column; align-items: center; gap: 0.5rem;
+    opacity: 0; animation: fadeIn 1s ease 1.2s forwards;
+    z-index: 1;
+  }
+  .hero-scroll span {
+    font-family: 'DM Mono', monospace; font-size: 0.65rem;
+    letter-spacing: 0.1em; text-transform: uppercase; color: rgba(255,255,255,0.3);
+    writing-mode: vertical-rl;
+  }
+  .scroll-line {
+    width: 1px; height: 60px; background: rgba(255,255,255,0.15);
+    position: relative; overflow: hidden;
+  }
+  .scroll-line::after {
+    content: ''; position: absolute; top: -100%; left: 0;
+    width: 1px; height: 100%; background: var(--accent);
+    animation: scrollDrop 1.5s ease-in-out infinite 1.5s;
+  }
+
+  /* ── SECTION BASE ── */
+  section { padding: 7rem 3rem; }
+
+  .section-label {
+    font-family: 'DM Mono', monospace;
+    font-size: 0.7rem; letter-spacing: 0.14em; text-transform: uppercase;
+    color: var(--accent); margin-bottom: 3rem;
+    display: flex; align-items: center; gap: 0.75rem;
+  }
+  .section-label::after {
+    content: ''; flex: 0 0 40px; height: 1px; background: var(--accent); opacity: 0.4;
+  }
+
+  h2 {
+    font-family: 'DM Serif Display', serif;
+    font-size: clamp(2.2rem, 4vw, 3.5rem);
+    line-height: 1.1; letter-spacing: -0.025em;
+  }
+
+  /* ── THESIS ── */
+  .thesis { background: #f0f7fb; border-top: 1px solid var(--rule); border-bottom: 1px solid var(--rule); }
+
+  .thesis-inner {
+    max-width: 1200px; margin: 0 auto;
+    display: grid; grid-template-columns: 1fr 1fr; gap: 6rem; align-items: start;
+  }
+
+  .thesis-left h2 { margin-bottom: 1.5rem; }
+
+  .thesis-left p {
+    color: var(--mid); font-size: 1.05rem; line-height: 1.7; margin-bottom: 1rem;
+  }
+
+  .thesis-right { padding-top: 0.5rem; }
+
+  .stat-row {
+    display: flex; flex-direction: column; gap: 0; border-top: 1px solid var(--rule);
+  }
+  .stat-item {
+    padding: 1.25rem 0; border-bottom: 1px solid var(--rule);
+    display: grid; grid-template-columns: 120px 1fr; gap: 1.5rem; align-items: start;
+  }
+  .stat-num {
+    font-family: 'DM Serif Display', serif;
+    font-size: 2.25rem; letter-spacing: -0.04em; color: var(--accent);
+    line-height: 1;
+  }
+  .stat-label { font-size: 0.95rem; color: var(--mid); line-height: 1.4; }
+  .stat-label strong { display: block; color: var(--ink); font-weight: 500; margin-bottom: 0.2rem; }
+
+  /* ── WINDOW ── */
+  .window-section { background: var(--ink); color: var(--paper); }
+
+  .window-inner { max-width: 1200px; margin: 0 auto; }
+
+  .window-section .section-label { color: var(--accent); }
+  .window-section h2 { color: var(--paper); margin-bottom: 1rem; }
+  .window-section h2 em { font-style: italic; color: var(--accent); }
+
+  .window-deck {
+    margin-top: 4rem;
+    display: grid; grid-template-columns: repeat(3, 1fr); gap: 1.5px;
+    background: rgba(255,255,255,0.08);
+    border: 1px solid rgba(255,255,255,0.08);
+  }
+
+  .window-card {
+    background: var(--ink);
+    padding: 2.5rem 2rem;
+    transition: background 0.3s;
+  }
+  .window-card:hover { background: #00527f; }
+
+  .window-card-num {
+    font-family: 'DM Mono', monospace; font-size: 0.7rem;
+    letter-spacing: 0.1em; color: rgba(255,255,255,0.25); margin-bottom: 1.5rem;
+  }
+  .window-card h3 {
+    font-family: 'DM Serif Display', serif; font-size: 1.4rem;
+    color: var(--paper); margin-bottom: 0.75rem; line-height: 1.2;
+  }
+  .window-card p { font-size: 0.9rem; color: rgba(255,255,255,0.45); line-height: 1.6; }
+
+  .window-bottom {
+    margin-top: 4rem; padding-top: 3rem;
+    border-top: 1px solid rgba(255,255,255,0.1);
+    display: flex; justify-content: space-between; align-items: end;
+    gap: 3rem;
+  }
+
+  .window-bottom p {
+    font-size: 1.15rem; color: rgba(255,255,255,0.55); max-width: 52ch; line-height: 1.6;
+  }
+  .window-bottom p strong { color: var(--paper); }
+
+  /* ── TWO PLAYS ── */
+  .plays-inner { max-width: 1200px; margin: 0 auto; }
+
+  .plays-grid {
+    margin-top: 3.5rem;
+    display: grid; grid-template-columns: 1fr 1fr; gap: 1.5px;
+    background: var(--rule);
+    border: 1px solid var(--rule);
+  }
+
+  .play-card {
+    background: var(--paper); padding: 3rem 2.5rem;
+    transition: background 0.3s;
+  }
+  .play-card:hover { background: #f0f7fb; }
+
+  .play-badge {
+    display: inline-block; padding: 0.3rem 0.9rem;
+    border: 1px solid var(--rule); border-radius: 2rem;
+    font-family: 'DM Mono', monospace; font-size: 0.7rem;
+    letter-spacing: 0.1em; text-transform: uppercase;
+    color: var(--mid); margin-bottom: 2rem;
+  }
+
+  .play-card h3 {
+    font-family: 'DM Serif Display', serif;
+    font-size: 2rem; letter-spacing: -0.02em; margin-bottom: 1rem; line-height: 1.1;
+  }
+
+  .play-card .play-tagline {
+    font-size: 0.9rem; color: var(--accent); font-weight: 500;
+    margin-bottom: 1.25rem; letter-spacing: 0.01em;
+  }
+
+  .play-card p { font-size: 0.95rem; color: var(--mid); line-height: 1.7; margin-bottom: 1rem; }
+
+  .play-features {
+    margin-top: 2rem; display: flex; flex-direction: column; gap: 0;
+    border-top: 1px solid var(--rule);
+  }
+  .play-feature {
+    padding: 0.9rem 0; border-bottom: 1px solid var(--rule);
+    display: flex; align-items: start; gap: 0.75rem;
+    font-size: 0.875rem; color: var(--mid);
+  }
+  .play-feature::before {
+    content: '→'; color: var(--accent); flex-shrink: 0; margin-top: 0.05rem;
+  }
+
+  /* ── WHY FLOCK ── */
+  .why { background: #eaf4f9; border-top: 1px solid var(--rule); border-bottom: 1px solid var(--rule); }
+  .why-inner { max-width: 1200px; margin: 0 auto; }
+
+  .why h2 { margin-bottom: 1rem; }
+  .why .why-sub {
+    font-size: 1.1rem; color: var(--mid); max-width: 52ch; margin-bottom: 4rem; line-height: 1.6;
+  }
+
+  .why-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 2.5rem; }
+
+  .why-item h4 {
+    font-family: 'DM Serif Display', serif; font-size: 1.25rem; margin-bottom: 0.75rem;
+  }
+  .why-item p { font-size: 0.9rem; color: var(--mid); line-height: 1.65; }
+
+  .pull-quote {
+    margin-top: 5rem; padding-top: 4rem; border-top: 1px solid var(--rule);
+    text-align: center;
+  }
+  .pull-quote blockquote {
+    font-family: 'DM Serif Display', serif;
+    font-size: clamp(1.6rem, 3vw, 2.5rem);
+    letter-spacing: -0.02em; line-height: 1.25;
+    max-width: 22ch; margin: 0 auto;
+    color: var(--ink);
+  }
+  .pull-quote blockquote em { font-style: italic; color: var(--accent); }
+  .pull-quote cite {
+    display: block; margin-top: 1.5rem;
+    font-family: 'DM Mono', monospace; font-size: 0.7rem;
+    letter-spacing: 0.12em; text-transform: uppercase; color: var(--mid);
+    font-style: normal;
+  }
+
+  /* ── FOUNDER ── */
+  .founder-inner { max-width: 1200px; margin: 0 auto; display: grid; grid-template-columns: 1fr 1.4fr; gap: 6rem; align-items: center; }
+
+  .founder-left h2 { margin-bottom: 1.5rem; }
+  .founder-left p { font-size: 1rem; color: var(--mid); line-height: 1.7; margin-bottom: 1rem; }
+
+  .founder-credential {
+    margin-top: 2.5rem; padding: 1.5rem 1.75rem;
+    border: 1px solid var(--rule); background: #f0f7fb;
+    border-left: 3px solid var(--cerulean);
+  }
+  .founder-credential p {
+    font-size: 0.9rem; color: var(--mid); margin: 0; line-height: 1.6;
+  }
+  .founder-credential strong { color: var(--ink); }
+
+  .founder-right {
+    position: relative;
+  }
+
+  .timeline {
+    display: flex; flex-direction: column; gap: 0;
+    border-left: 2px solid var(--rule); padding-left: 2rem;
+    position: relative;
+  }
+
+  .timeline-item {
+    padding: 0 0 2.5rem;
+    position: relative;
+  }
+  .timeline-item::before {
+    content: ''; position: absolute; left: -2.45rem; top: 0.35rem;
+    width: 8px; height: 8px; border-radius: 50%;
+    background: var(--rule); border: 2px solid var(--paper);
+    transition: background 0.3s;
+  }
+  .timeline-item.active::before { background: var(--accent); }
+
+  .timeline-year {
+    font-family: 'DM Mono', monospace; font-size: 0.72rem;
+    letter-spacing: 0.1em; color: var(--accent); margin-bottom: 0.4rem;
+  }
+  .timeline-item h4 {
+    font-size: 1rem; font-weight: 500; color: var(--ink); margin-bottom: 0.35rem;
+  }
+  .timeline-item p { font-size: 0.875rem; color: var(--mid); line-height: 1.5; }
+
+  /* ── RAISE ── */
+  .raise { background: var(--ink); color: var(--paper); text-align: center; }
+  .raise-inner { max-width: 800px; margin: 0 auto; }
+
+  .raise .section-label { justify-content: center; color: rgba(255,255,255,0.3); }
+  .raise .section-label::after { background: rgba(255,255,255,0.15); }
+
+  .raise h2 {
+    color: var(--paper); font-size: clamp(2.5rem, 5vw, 4.5rem);
+    line-height: 1.05; letter-spacing: -0.03em; margin-bottom: 1.5rem;
+  }
+  .raise h2 em { font-style: italic; color: var(--accent); }
+
+  .raise .raise-sub {
+    font-size: 1.1rem; color: rgba(255,255,255,0.45);
+    max-width: 44ch; margin: 0 auto 3rem; line-height: 1.6;
+  }
+
+  .raise-details {
+    display: flex; justify-content: center; gap: 3rem; margin-bottom: 3.5rem;
+    flex-wrap: wrap;
+  }
+  .raise-detail { text-align: center; }
+  .raise-detail .rd-num {
+    font-family: 'DM Serif Display', serif; font-size: 2.5rem; color: var(--accent);
+    letter-spacing: -0.04em; line-height: 1;
+  }
+  .raise-detail .rd-label {
+    font-family: 'DM Mono', monospace; font-size: 0.7rem;
+    letter-spacing: 0.1em; text-transform: uppercase; color: rgba(255,255,255,0.3);
+    margin-top: 0.4rem;
+  }
+
+  .raise-divider { width: 40px; height: 1px; background: rgba(255,255,255,0.1); margin: 0 auto 3.5rem; }
+
+  .raise-contact {
+    background: rgba(255,255,255,0.04); border: 1px solid rgba(255,255,255,0.08);
+    padding: 2.5rem 3rem; max-width: 480px; margin: 0 auto;
+  }
+  .raise-contact p { font-size: 0.9rem; color: rgba(255,255,255,0.4); margin-bottom: 1.25rem; }
+
+  .raise-contact a.email-link {
+    display: block; font-family: 'DM Serif Display', serif;
+    font-size: 1.5rem; color: var(--paper); text-decoration: none;
+    letter-spacing: -0.02em; margin-bottom: 2rem;
+    transition: color 0.2s;
+  }
+  .raise-contact a.email-link:hover { color: var(--accent); }
+
+  .raise-contact .btn-primary {
+    width: 100%; text-align: center; padding: 0.9rem;
+    font-size: 0.9rem; letter-spacing: 0.03em;
+    background: var(--accent); border-radius: 3px;
+  }
+  .raise-contact .btn-primary:hover { background: #d43520; }
+
+  /* ── FOOTER ── */
+  footer {
+    padding: 2.5rem 3rem; border-top: 1px solid var(--rule);
+    display: flex; justify-content: space-between; align-items: center;
+    background: var(--white);
+  footer .f-logo {
+    font-family: 'DM Serif Display', serif; font-size: 1.1rem;
+    color: var(--mid); text-decoration: none;
+  }
+  footer .f-logo span { color: var(--accent); }
+  footer p { font-size: 0.78rem; color: var(--mid); opacity: 0.5; }
+
+  /* ── ANIMATIONS ── */
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(24px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+  @keyframes fadeIn {
+    from { opacity: 0; }
+    to   { opacity: 1; }
+  }
+  @keyframes scrollDrop {
+    0%   { top: -100%; }
+    100% { top: 200%; }
+  }
+  @keyframes bounce {
+    0%, 100% { transform: translateY(0); }
+    50%       { transform: translateY(10px); }
+  }
+
+  .reveal {
+    opacity: 0; transform: translateY(20px);
+    transition: opacity 0.7s ease, transform 0.7s ease;
+  }
+  .reveal.visible { opacity: 1; transform: translateY(0); }
+  .reveal-delay-1 { transition-delay: 0.1s; }
+  .reveal-delay-2 { transition-delay: 0.2s; }
+  .reveal-delay-3 { transition-delay: 0.3s; }
+
+  /* ── RESPONSIVE ── */
+  @media (max-width: 900px) {
+    nav { padding: 1rem 1.5rem; }
+    section { padding: 5rem 1.5rem; }
+    .hero { padding: 0 1.5rem 4rem; }
+    .thesis-inner, .plays-grid, .founder-inner { grid-template-columns: 1fr; gap: 3rem; }
+    .why-grid { grid-template-columns: 1fr 1fr; }
+    .window-deck { grid-template-columns: 1fr; }
+    .window-bottom { flex-direction: column; }
+    .raise-details { gap: 2rem; }
+    .nav-links { display: none; }
+  }
+  @media (max-width: 600px) {
+    .why-grid { grid-template-columns: 1fr; }
+    .raise-contact { padding: 1.75rem; }
+  }
+
+  /* ── FOOTER ── */
+  footer {
+    background-color: #00436E !important;
+    border-top: 1px solid rgba(255,255,255,0.08);
+    display: block !important;
+    padding: 0 !important;
+  }
+
+  .footer-inner {
+    max-width: 1200px; margin: 0 auto;
+    padding: 5rem 3rem 2.5rem;
+  }
+
+  .footer-top {
+    display: grid; grid-template-columns: 1.2fr 2fr;
+    gap: 5rem; padding-bottom: 4rem;
+    border-bottom: 1px solid rgba(255,255,255,0.08);
+  }
+
+  .footer-brand .f-logo {
+    font-family: 'DM Serif Display', serif;
+    font-size: 1.75rem; letter-spacing: -0.02em;
+    color: #ffffff !important; text-decoration: none;
+    display: inline-block; margin-bottom: 1.25rem;
+  }
+  .footer-brand .f-logo span { color: #E8402A !important; }
+
+  .footer-tagline {
+    font-size: 0.9rem; color: rgba(255,255,255,0.45);
+    line-height: 1.6; max-width: 28ch; margin-bottom: 1.25rem;
+  }
+
+  .footer-location {
+    font-family: 'DM Mono', monospace;
+    font-size: 0.7rem; letter-spacing: 0.08em;
+    color: rgba(255,255,255,0.25); text-transform: uppercase;
+  }
+
+  .footer-links-group {
+    display: grid; grid-template-columns: repeat(3, 1fr); gap: 2rem;
+  }
+
+  .footer-col h5 {
+    font-family: 'DM Mono', monospace;
+    font-size: 0.65rem; letter-spacing: 0.12em; text-transform: uppercase;
+    color: rgba(255,255,255,0.3); margin-bottom: 1.25rem;
+    font-weight: 400;
+  }
+
+  .footer-col a {
+    display: block; font-size: 0.875rem;
+    color: rgba(255,255,255,0.55) !important; text-decoration: none;
+    margin-bottom: 0.65rem; transition: color 0.2s;
+  }
+  .footer-col a:hover { color: #ffffff !important; }
+
+  .footer-bottom {
+    display: flex; justify-content: space-between; align-items: center;
+    padding-top: 2rem; flex-direction: row !important;
+    text-align: left !important;
+  }
+
+  .footer-bottom p {
+    font-size: 0.78rem; color: rgba(255,255,255,0.2);
+  }
+
+  .footer-bottom-links { display: flex; gap: 1.5rem; }
+  .footer-bottom-links a {
+    font-size: 0.78rem; color: rgba(255,255,255,0.2) !important;
+    text-decoration: none; transition: color 0.2s;
+  }
+  .footer-bottom-links a:hover { color: rgba(255,255,255,0.5) !important; }
+
+  @media (max-width: 900px) {
+    .footer-top { grid-template-columns: 1fr; gap: 3rem; }
+    .footer-links-group { grid-template-columns: repeat(2, 1fr); }
+    .footer-bottom { flex-direction: column !important; gap: 1rem; text-align: center !important; }
+    .footer-inner { padding: 3rem 1.5rem 2rem; }
+  }
+  @media (max-width: 500px) {
+    .footer-links-group { grid-template-columns: 1fr; }
+  }
+</style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav id="nav">
+  <a href="#" class="nav-logo">Flock<span>.</span></a>
+  <div class="nav-links">
+    <a href="#what-we-do">What We Do</a>
+    <a href="#plays">Our Business</a>
+    <a href="#contact" class="btn-primary">Get in Touch</a>
+  </div>
+</nav>
+
+<!-- HERO -->
+<section class="hero">
+  <div class="hero-grid"></div>
+  <p class="hero-tag">Autonomous Vehicle Infrastructure</p>
+  <h1>Autonomous cars are coming.<br><em>Our infrastructure<br>isn't ready.</em></h1>
+  <p class="hero-sub">Flock is building the charging and servicing infrastructure that autonomous vehicle fleets will depend on.</p>
+  <div class="hero-cta">
+    <a href="#what-we-do" class="btn-primary">See What We're Building</a>
+    <a href="#contact" class="btn-ghost">
+      Work with us
+      <svg width="14" height="14" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+        <path d="M5 12h14M12 5l7 7-7 7"/>
+      </svg>
+    </a>
+  </div>
+  <div style="height: 3rem; position: relative; z-index: 1;"></div>
+  <a href="#what-we-do" class="hero-scroll-arrow">
+    <span>Scroll</span>
+    <svg width="28" height="28" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5">
+      <path d="M12 5v14M5 12l7 7 7-7"/>
+    </svg>
+  </a>
+</section>
+
+<!-- WHAT WE DO -->
+<section class="thesis" id="what-we-do">
+  <div class="thesis-inner">
+    <div class="thesis-left">
+      <div class="section-label reveal">What We Do</div>
+      <h2 class="reveal reveal-delay-1">The infrastructure every autonomous fleet needs.</h2>
+      <p class="reveal reveal-delay-2">Autonomous vehicles don't just need roads — they need charging, cleaning, and servicing hubs embedded in the cities they operate in. That's what Flock builds and operates, partnered inside existing parkade infrastructure across Canada's major urban centres.</p>
+      <p class="reveal reveal-delay-2">We partner with parkade operators — not compete with them. Flock absorbs all permit and electrical build costs in exchange for long-term exclusive operating agreements. Zero capital at risk for our partners. Maximum strategic value for us.</p>
+      <p class="reveal reveal-delay-3">It doesn't matter which AV company wins. Every autonomous fleet that operates in Canada needs what we've already built. That's the toll booth.</p>
+    </div>
+    <div class="thesis-right reveal">
+      <div class="stat-row">
+        <div class="stat-item">
+          <div class="stat-num">6–10×</div>
+          <div class="stat-label">
+            <strong>Higher charger utilization</strong>
+            Robotaxis charge 4–5 times per day vs. once every few days for personal EVs — the multiplier that makes our infrastructure economics transformational
+          </div>
+        </div>
+        <div class="stat-item">
+          <div class="stat-num">$0</div>
+          <div class="stat-label">
+            <strong>Capital at risk for parkade partners</strong>
+            Flock absorbs all permit and electrical build costs. Partners get long-term revenue share with no outlay
+          </div>
+        </div>
+        <div class="stat-item">
+          <div class="stat-num">679K</div>
+          <div class="stat-label">
+            <strong>Public charging ports needed by 2040</strong>
+            NRCan-commissioned projection — Canada's EV infrastructure gap is structural and urgent
+          </div>
+        </div>
+        <div class="stat-item">
+          <div class="stat-num">Fleet-<br>agnostic</div>
+          <div class="stat-label">
+            <strong>Any operator, any manufacturer</strong>
+            Tesla, Waymo, or whoever wins — they all need Flock's infrastructure to operate
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- TRACTION / STATUS -->
+<section class="window-section" id="traction">
+  <div class="window-inner">
+    <div class="section-label reveal">Where We Are</div>
+    <h2 class="reveal reveal-delay-1">Active. In market.<br><em>Moving fast.</em></h2>
+    <div class="window-deck">
+      <div class="window-card reveal">
+        <div class="window-card-num">01</div>
+        <h3>Vancouver as beachhead</h3>
+        <p>BC leads Canada in EV adoption and has the most advanced AV regulatory framework. We're building our first exclusive infrastructure agreements here — with EasyPark, Impark, Indigo, and others already in conversation.</p>
+      </div>
+      <div class="window-card reveal reveal-delay-1">
+        <div class="window-card-num">02</div>
+        <h3>Parkade partnerships underway</h3>
+        <p>We've identified and are actively engaging the key operators across Vancouver's high-density urban parkade network. Flock handles permitting, electrical, and installation — partners sign the exclusives.</p>
+      </div>
+      <div class="window-card reveal reveal-delay-2">
+        <div class="window-card-num">03</div>
+        <h3>Regulatory window is open</h3>
+        <p>Canada's AV commercial approval is tracking within an 18-month horizon. The operators who sign infrastructure agreements now lock out competitors before the market materialises. That window doesn't stay open.</p>
+      </div>
+    </div>
+    <div class="window-bottom reveal">
+      <p><strong>Canada's regulatory structure is a genuine advantage.</strong> Unlike the US, where AV rules fragment state-by-state, Canada's federal-provincial coordination creates a faster, cleaner path to commercial approval — and a more defensible first-mover position.</p>
+      <a href="#plays" class="btn-primary" style="flex-shrink:0;">Our two businesses →</a>
+    </div>
+  </div>
+</section>
+
+<!-- TWO PLAYS -->
+<section id="plays">
+  <div class="plays-inner">
+    <div class="section-label reveal">Our Business</div>
+    <h2 class="reveal reveal-delay-1">Infrastructure.<br>Then capital.</h2>
+    <div class="plays-grid">
+      <div class="play-card reveal">
+        <div class="play-badge">Business 01</div>
+        <h3>Flock Infrastructure</h3>
+        <div class="play-tagline">The operating layer beneath every Canadian robotaxi fleet.</div>
+        <p>We build and operate EV charging and vehicle cleaning hubs inside existing Canadian parkades. Flock manages the entire process — permits, electrical infrastructure, installation — in exchange for long-term exclusive agreements with parkade operators.</p>
+        <p>Every autonomous EV operator entering Vancouver uses our network. We don't pick winners. We built the road they all drive on.</p>
+        <div class="play-features">
+          <div class="play-feature">Full project management from permit to live operation</div>
+          <div class="play-feature">Exclusive long-term agreements with EasyPark, Impark, Indigo</div>
+          <div class="play-feature">Fleet-agnostic — revenue regardless of which AV company dominates</div>
+          <div class="play-feature">Zero build cost to partners — Flock absorbs all friction</div>
+        </div>
+      </div>
+      <div class="play-card reveal reveal-delay-1">
+        <div class="play-badge">Business 02</div>
+        <h3>Flock Capital</h3>
+        <div class="play-tagline">Owning the vehicles that will run on our infrastructure.</div>
+        <p>A vehicle acquisition fund acquiring Tesla FSD-equipped vehicles and Cybercabs ahead of Canadian commercial approval. These assets operate inside Flock's own infrastructure network — vertically integrated from day one.</p>
+        <p>Cybercab production is constrained at roughly 3–4 million units globally. Fleet demand will far outstrip supply. We're acquiring at today's prices for tomorrow's economics.</p>
+        <div class="play-features">
+          <div class="play-feature">Tesla Cybercab: production-capped, demand-driven appreciation</div>
+          <div class="play-feature">FSD fleet operable on day one of Canadian approval</div>
+          <div class="play-feature">Vehicles run inside Flock's own charging and servicing hubs</div>
+          <div class="play-feature">Infrastructure comes first — Capital raises on proven revenue</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- WHY FLOCK WINS -->
+<section class="why">
+  <div class="why-inner">
+    <div class="section-label reveal">Why Flock</div>
+    <h2 class="reveal reveal-delay-1">Exclusive agreements.<br>Locked before the rush.</h2>
+    <p class="why-sub reveal reveal-delay-2">The infrastructure layer only needs to be built once. We're building it now.</p>
+    <div class="why-grid">
+      <div class="why-item reveal">
+        <h4>First-mover lock-in</h4>
+        <p>Our exclusive parkade agreements are signed before the AV commercial window opens. Once the agreements are in place, this market is structurally closed. No competitor can build what we've already signed.</p>
+      </div>
+      <div class="why-item reveal reveal-delay-1">
+        <h4>No single point of failure</h4>
+        <p>Flock serves every autonomous fleet regardless of manufacturer. Tesla, Waymo, or a brand that doesn't exist yet — they all need our charging and servicing infrastructure to operate in Canadian cities.</p>
+      </div>
+      <div class="why-item reveal reveal-delay-2">
+        <h4>Built to be acquired</h4>
+        <p>When Uber, Lyft, or Tesla scales its Canadian autonomous operations, Flock is the most logical acquisition. We own the infrastructure they depend on and the vehicles running on it. That's an essential buy.</p>
+      </div>
+    </div>
+    <div class="pull-quote reveal">
+      <blockquote>"We don't need to predict <em>who wins</em> the autonomous era. We are building the infrastructure to serve all autonomous vehicles."</blockquote>
+      <cite>— Andrew, Founder, Flock</cite>
+    </div>
+  </div>
+</section>
+
+
+<!-- CONTACT / RAISE -->
+<section class="raise" id="contact">
+  <div class="raise-inner">
+    <div class="section-label">Get Involved</div>
+    <h2>Investors. Operators.<br><em>Let's talk.</em></h2>
+    <p class="raise-sub">Whether you're a parkade operator looking for a low-risk infrastructure partner, or an investor who sees what we see — we want to hear from you.</p>
+    <div class="raise-details">
+      <div class="raise-detail">
+        <div class="rd-num">Vancouver</div>
+        <div class="rd-label">Initial Market</div>
+      </div>
+      <div class="raise-detail">
+        <div class="rd-num">2025</div>
+        <div class="rd-label">Operational Target</div>
+      </div>
+      <div class="raise-detail">
+        <div class="rd-num">Canada-wide</div>
+        <div class="rd-label">Expansion Roadmap</div>
+      </div>
+    </div>
+    <div class="raise-divider"></div>
+    <div class="raise-contact">
+      <p>Reach out directly — we respond to everyone who's serious.</p>
+      <a href="/cdn-cgi/l/email-protection#442c2128282b0422282b272f2d2a2236256a272b29" class="email-link"><span class="__cf_email__" data-cfemail="5e363b3232311e3832313d353730382c3f703d3133">[email&#160;protected]</span></a>
+      <a href="/cdn-cgi/l/email-protection#224a474e4e4d62444e4d41494b4c4450430c414d4f" class="btn-primary">Start a Conversation →</a>
+    </div>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer style="background:#00436E;display:block;padding:0;border-top:1px solid rgba(255,255,255,0.08);">
+  <div style="max-width:1200px;margin:0 auto;padding:5rem 3rem 2.5rem;">
+
+    <!-- Top row -->
+    <div style="display:grid;grid-template-columns:1.2fr 2fr;gap:5rem;padding-bottom:4rem;border-bottom:1px solid rgba(255,255,255,0.1);">
+
+      <!-- Brand -->
+      <div>
+        <a href="#" style="font-family:'DM Serif Display',serif;font-size:1.75rem;color:#fff;text-decoration:none;display:inline-block;margin-bottom:1.25rem;letter-spacing:-0.02em;">Flock<span style="color:#E8402A;">.</span></a>
+        <p style="font-size:0.9rem;color:rgba(255,255,255,0.45);line-height:1.6;max-width:28ch;margin-bottom:1.25rem;">Building the infrastructure backbone for Canada's autonomous vehicle era.</p>
+        <p style="font-family:'DM Mono',monospace;font-size:0.7rem;letter-spacing:0.08em;color:rgba(255,255,255,0.25);text-transform:uppercase;">Vancouver, BC · Canada</p>
+      </div>
+
+      <!-- Link columns -->
+      <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:2rem;">
+
+        <div>
+          <p style="font-family:'DM Mono',monospace;font-size:0.65rem;letter-spacing:0.12em;text-transform:uppercase;color:rgba(255,255,255,0.3);margin-bottom:1.25rem;">Company</p>
+          <a href="#what-we-do" style="display:block;font-size:0.875rem;color:rgba(255,255,255,0.6);text-decoration:none;margin-bottom:0.65rem;">What We Do</a>
+          <a href="#traction" style="display:block;font-size:0.875rem;color:rgba(255,255,255,0.6);text-decoration:none;margin-bottom:0.65rem;">Where We Are</a>
+          <a href="#plays" style="display:block;font-size:0.875rem;color:rgba(255,255,255,0.6);text-decoration:none;margin-bottom:0.65rem;">Our Business</a>
+          <a href="#contact" style="display:block;font-size:0.875rem;color:rgba(255,255,255,0.6);text-decoration:none;margin-bottom:0.65rem;">Get in Touch</a>
+        </div>
+
+        <div>
+          <p style="font-family:'DM Mono',monospace;font-size:0.65rem;letter-spacing:0.12em;text-transform:uppercase;color:rgba(255,255,255,0.3);margin-bottom:1.25rem;">Businesses</p>
+          <a href="#plays" style="display:block;font-size:0.875rem;color:rgba(255,255,255,0.6);text-decoration:none;margin-bottom:0.65rem;">Flock Infrastructure</a>
+          <a href="#plays" style="display:block;font-size:0.875rem;color:rgba(255,255,255,0.6);text-decoration:none;margin-bottom:0.65rem;">Flock Capital</a>
+        </div>
+
+        <div>
+          <p style="font-family:'DM Mono',monospace;font-size:0.65rem;letter-spacing:0.12em;text-transform:uppercase;color:rgba(255,255,255,0.3);margin-bottom:1.25rem;">Contact</p>
+          <a href="/cdn-cgi/l/email-protection#81e9e4ededeec1e7edeee2eae8efe7f3e0afe2eeec" style="display:block;font-size:0.875rem;color:rgba(255,255,255,0.6);text-decoration:none;margin-bottom:0.65rem;"><span class="__cf_email__" data-cfemail="640c0108080b2402080b070f0d0a0216054a070b09">[email&#160;protected]</span></a>
+          <a href="#contact" style="display:block;font-size:0.875rem;color:rgba(255,255,255,0.6);text-decoration:none;margin-bottom:0.65rem;">Investor Enquiries</a>
+          <a href="#contact" style="display:block;font-size:0.875rem;color:rgba(255,255,255,0.6);text-decoration:none;margin-bottom:0.65rem;">Partner with Us</a>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- Bottom bar -->
+    <div style="display:flex;justify-content:space-between;align-items:center;padding-top:2rem;flex-wrap:wrap;gap:1rem;">
+      <p style="font-size:0.78rem;color:rgba(255,255,255,0.2);">© 2025 Flock Infrastructure Inc. All rights reserved.</p>
+      <div style="display:flex;gap:1.5rem;">
+        <a href="#" style="font-size:0.78rem;color:rgba(255,255,255,0.2);text-decoration:none;">Privacy Policy</a>
+        <a href="#" style="font-size:0.78rem;color:rgba(255,255,255,0.2);text-decoration:none;">Terms</a>
+      </div>
+    </div>
+
+  </div>
+</footer>
+
+<script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script><script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script><script>
+  // Nav scroll state
+  const nav = 
